@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TelephoneDirectory.Data;
@@ -11,9 +12,11 @@ using TelephoneDirectory.Data;
 namespace TelephoneDirectory.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230315154213_mig_2")]
+    partial class mig_2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,9 +65,6 @@ namespace TelephoneDirectory.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("TokenType")
-                        .HasColumnType("integer");
-
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
@@ -73,7 +73,7 @@ namespace TelephoneDirectory.Migrations
                     b.ToTable("Tokens");
                 });
 
-            modelBuilder.Entity("TelephoneDirectory.UserModel", b =>
+            modelBuilder.Entity("TelephoneDirectory.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -86,9 +86,6 @@ namespace TelephoneDirectory.Migrations
 
                     b.Property<string>("UserName")
                         .HasColumnType("text");
-
-                    b.Property<int>("UserType")
-                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 

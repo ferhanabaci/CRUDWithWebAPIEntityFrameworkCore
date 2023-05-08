@@ -36,7 +36,7 @@ namespace TelephoneDirectory.Controllers
         }
         [AllowAnonymous]
         [HttpPost("Authorize")]
-        public IActionResult AuthUser([FromBody] User usr)
+        public IActionResult AuthUser([FromBody] UserModel usr)
         {
             var token = jwtAuthenticationManager.Authenticate(usr.UserName, usr.Password);
             if (token == null)

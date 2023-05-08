@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TelephoneDirectory.RequestModels;
 
 namespace TelephoneDirectory.Controllers
 {
@@ -17,13 +18,13 @@ namespace TelephoneDirectory.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<User>>> GetUser()
+        public async Task<ActionResult<List<UserModel>>> GetUser()
         {
             return Ok(await _context.Users.ToListAsync());
         }
 
         [HttpPost("Added")]
-        public async Task<ActionResult<List<User>>> AddUser(User usr)
+        public async Task<ActionResult<List<UserModel>>> AddUser(UserModel usr)
         {
             
              _context.Users.Add(usr);
@@ -31,16 +32,28 @@ namespace TelephoneDirectory.Controllers
             return Ok(await _context.Users.ToListAsync());
         }
 
-        [HttpPost]
-        public IActionResult AuthUser(User usr)
+        [HttpPost("AuthUser")]
+        public IActionResult AuthUser(UserRequestModel usr)
         {
-            var varmi = _context.Find<User>(usr.UserName,usr.Password);
-            var token = _jwtAuthenticationManager.Authenticate(usr.UserName, usr.Password);
-            if (token == null)
+            var loginedUser = _context.Users.AsQueryable().FirstOrDefault(x=>x.UserName==usr.UserName&& x.Password == usr.Password);
+            var varmi = loginedUser!=null ? true: false;
+
+            if (varmi)
             {
-                return Unauthorized();
-            }
-            return Ok(token);
+                var tokenInfo = new TokenModel
+                {
+                    Token = _jwtAuthenticationManager.Authenticate(usr.UserName, usr.Password),
+                    ExpireDate = DateTime.UtcNow.AddHours(3),
+                    TokenType = loginedUser.UserType,
+                    UserId = loginedUser.Id
+                     
+                };
+            
+            _context.Tokens.Add(tokenInfo);
+            _context.SaveChanges();
+                return Ok(tokenInfo);
+            }  
+            return Ok("user not found");
         }
 
     }

@@ -8,9 +8,6 @@ namespace TelephoneDirectory
     public  class JwtAuthenticationManager
     {
         private readonly string key;
-        private readonly IDictionary<string, string> users = new Dictionary<string, string>()
-        { {"test", "password" },{"test1", "pwd"  }};
-
         public JwtAuthenticationManager(string key)
         {
             this.key = key;
@@ -18,8 +15,7 @@ namespace TelephoneDirectory
 
         public string Authenticate(string username, string password)
         {
-            if (!users.Any(u => u.Key == username && u.Value == password))
-            { return null; }
+            
 
             //ilk önce  bir jwt güvenlik belirteci işleyicisi olusturuyoruz
             JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
@@ -37,7 +33,7 @@ namespace TelephoneDirectory
                     }),
 
                 // bir süre ayarı yapmamız gerekiyor, bu süre ayarı yaparken aynı zamanda kimlik bilgileri algoritmayı da tanımlamam gerekiyor.
-                Expires = DateTime.UtcNow.AddHours(1),
+                Expires = DateTime.UtcNow.AddHours(3),
                 SigningCredentials = new SigningCredentials(
                         new SymmetricSecurityKey(tokenKey),
                         SecurityAlgorithms.HmacSha256Signature)
